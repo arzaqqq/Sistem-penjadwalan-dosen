@@ -1,3 +1,4 @@
+import os  # Pastikan ini ada di bagian atas file
 from flask import Flask, render_template, request, session
 import pandas as pd
 from werkzeug.utils import secure_filename
@@ -29,12 +30,11 @@ def extract_dosen_from_file(file_path):
     return dosen_list, data
 
 # Fungsi untuk mencari jadwal kosong berdasarkan dosen yang dipilih
-# Fungsi untuk mencari jadwal kosong berdasarkan dosen yang dipilih
 def cari_jadwal_kosong(dosen_list, data):
     jam_mulai = time_to_datetime("08:00")  # Jam mulai yang kita tentukan (08:00)
-    jam_selesai = time_to_datetime("15:00")  # Jam selesai yang kita tentukan (15:00)
+    jam_selesai = time_to_datetime("17:00")  # Jam selesai yang kita tentukan (15:00)
     waktu_kosong = []
-    
+
     # Loop untuk setiap hari
     for hari in ['SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT']:
         jadwal_hari = []
@@ -60,14 +60,18 @@ def cari_jadwal_kosong(dosen_list, data):
         if prev_end_time < jam_selesai:
             waktu_kosong.append((prev_end_time.strftime('%H:%M'), jam_selesai.strftime('%H:%M'), hari))
 
-    # Tambahkan nama dosen yang dipilih pada hasil jadwal kosong
-    return dosen_list, waktu_kosong
+    return waktu_kosong  # Hanya mengembalikan waktu kosong
 
 
 # Halaman Upload untuk file jadwal dosen
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
+        # Menghapus sesi yang lama terlebih dahulu
+        session.pop('dosen_list', None)
+        session.pop('data', None)
+
+        # Mengambil file yang di-upload
         file = request.files['file']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
@@ -85,6 +89,8 @@ def upload_file():
 
     return render_template('upload.html')
 
+
+# Halaman utama untuk memilih dosen dan mencari jadwal kosong
 # Halaman utama untuk memilih dosen dan mencari jadwal kosong
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -92,23 +98,24 @@ def index():
     data = pd.read_json(session.get('data', '{}'))  # Mengambil data jadwal dosen yang telah disimpan
 
     if request.method == 'POST':
-        # Ambil nama dosen yang dipilih
-        selected_dosen = [request.form.get(f'dosen{i}') for i in range(1, 5)]
+        # Ambil nama dosen yang dipilih dari setiap dropdown
+        dosen_pembimbing_1 = request.form.get('dosen1')
+        dosen_pembimbing_2 = request.form.get('dosen2')
+        dosen_penguji_1 = request.form.get('dosen3')
+        dosen_penguji_2 = request.form.get('dosen4')
 
-        # Filter dosen yang tidak dipilih (kosong)
-        selected_dosen = [dosen for dosen in selected_dosen if dosen]
+        # Menyusun dosen yang dipilih dalam kategori
+        dosen_dict = {
+            'dosen_pembimbing_1': dosen_pembimbing_1,
+            'dosen_pembimbing_2': dosen_pembimbing_2,
+            'dosen_penguji_1': dosen_penguji_1,
+            'dosen_penguji_2': dosen_penguji_2,
+        }
 
+        # Mencari jadwal kosong berdasarkan dosen yang dipilih
+        selected_dosen = [dosen for dosen in dosen_dict.values() if dosen]
         if selected_dosen:
-            # Mencari jadwal kosong berdasarkan dosen yang dipilih
-            dosen_pilihan, jadwal_kosong = cari_jadwal_kosong(selected_dosen, data)
-
-            # Menyusun hasil output berdasarkan urutan dropdown
-            dosen_dict = {
-                'dosen_pembimbing_1': selected_dosen[0] if len(selected_dosen) > 0 else '',
-                'dosen_pembimbing_2': selected_dosen[1] if len(selected_dosen) > 1 else '',
-                'dosen_penguji_1': selected_dosen[2] if len(selected_dosen) > 2 else '',
-                'dosen_penguji_2': selected_dosen[3] if len(selected_dosen) > 3 else '',
-            }
+            jadwal_kosong = cari_jadwal_kosong(selected_dosen, data)
 
             return render_template('index.html', dosen_list=dosen_list, jadwal_kosong=jadwal_kosong, dosen_pilihan=dosen_dict)
 

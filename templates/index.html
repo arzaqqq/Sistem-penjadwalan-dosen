@@ -46,10 +46,22 @@
 
     {% if jadwal_kosong %}
     <h2>Jadwal Kosong untuk:</h2>
-    <p>Dosen Pembimbing 1: {{ dosen_pilihan['dosen_pembimbing_1'] }}</p>
-    <p>Dosen Pembimbing 2: {{ dosen_pilihan['dosen_pembimbing_2'] }}</p>
-    <p>Dosen Penguji 1: {{ dosen_pilihan['dosen_penguji_1'] }}</p>
-    <p>Dosen Penguji 2: {{ dosen_pilihan['dosen_penguji_2'] }}</p>
+
+    {% if dosen_pilihan['dosen_pembimbing_1'] %}
+        <p>Dosen Pembimbing 1: {{ dosen_pilihan['dosen_pembimbing_1'] }}</p>
+    {% endif %}
+
+    {% if dosen_pilihan['dosen_pembimbing_2'] %}
+        <p>Dosen Pembimbing 2: {{ dosen_pilihan['dosen_pembimbing_2'] }}</p>
+    {% endif %}
+
+    {% if dosen_pilihan['dosen_penguji_1'] %}
+        <p>Dosen Penguji 1: {{ dosen_pilihan['dosen_penguji_1'] }}</p>
+    {% endif %}
+
+    {% if dosen_pilihan['dosen_penguji_2'] %}
+        <p>Dosen Penguji 2: {{ dosen_pilihan['dosen_penguji_2'] }}</p>
+    {% endif %}
 
     <ul>
         {% for jadwal in jadwal_kosong %}
