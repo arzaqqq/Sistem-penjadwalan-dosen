@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cari Jadwal Kosong</title>
+</head>
+<body>
+    <h1>Cari Jadwal Kosong Dosen</h1>
+    
+    <form id="formJadwal">
+        <input type="text" id="dosen1" placeholder="Masukkan Nama Dosen 1" required>
+        <input type="text" id="dosen2" placeholder="Masukkan Nama Dosen 2" required>
+        <button type="submit">Cari Jadwal Kosong</button>
+    </form>
+
+    <h2>Hasil Jadwal Kosong:</h2>
+    <ul id="hasilJadwalKosong"></ul>
+
+    <script>
+        document.getElementById('formJadwal').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var dosen1 = document.getElementById('dosen1').value;
+            var dosen2 = document.getElementById('dosen2').value;
+            
+            fetch(`/cari_jadwal?dosen=${dosen1}&dosen=${dosen2}`)
+                .then(response => response.json())
+                .then(data => {
+                    var ul = document.getElementById('hasilJadwalKosong');
+                    ul.innerHTML = ''; // Clear previous results
+                    data.forEach(item => {
+                        var li = document.createElement('li');
+                        li.textContent = `Dosen ${item.dosen}: ${item.hari} - ${item.waktu}`;
+                        ul.appendChild(li);
+                    });
+                });
+        });
+    </script>
+</body>
+</html>

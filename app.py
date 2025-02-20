@@ -41,6 +41,9 @@ def save_to_db(data):
     conn.commit()
     conn.close()
 
+@app.route('/')
+def index():
+    return render_template('index.html')
 # Halaman upload jadwal dosen
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
