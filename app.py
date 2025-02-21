@@ -31,8 +31,8 @@ def extract_dosen_from_file(file_path):
 
 # Fungsi untuk mencari jadwal kosong berdasarkan dosen yang dipilih
 def cari_jadwal_kosong(dosen_list, data):
-    jam_mulai = time_to_datetime("08:00")  # Jam mulai yang kita tentukan (08:00)
-    jam_selesai = time_to_datetime("17:00")  # Jam selesai yang kita tentukan (15:00)
+    jam_mulai = time_to_datetime("09:00")  # Jam mulai 
+    jam_selesai = time_to_datetime("17:00")  # Jam selesai 
     waktu_kosong = []
 
     # Loop untuk setiap hari
@@ -85,10 +85,17 @@ def upload_file():
             session['dosen_list'] = dosen_list
             session['data'] = data.to_json()  # Menyimpan data dalam format JSON untuk digunakan nanti
 
-            return render_template('index.html', dosen_list=dosen_list)
+            # Inisialisasi variabel dosen_pilihan dengan dictionary kosong
+            dosen_pilihan = {
+                'dosen_pembimbing_1': '',
+                'dosen_pembimbing_2': '',
+                'dosen_penguji_1': '',
+                'dosen_penguji_2': ''
+            }
+
+            return render_template('index.html', dosen_list=dosen_list, dosen_pilihan=dosen_pilihan)
 
     return render_template('upload.html')
-
 
 # Halaman utama untuk memilih dosen dan mencari jadwal kosong
 # Halaman utama untuk memilih dosen dan mencari jadwal kosong
