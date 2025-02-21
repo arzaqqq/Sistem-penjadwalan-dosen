@@ -13,34 +13,34 @@
         <select id="dosen1" name="dosen1">
             <option value="">--Pilih Dosen--</option>
             {% for dosen in dosen_list %}
-                <option value="{{ dosen }}">{{ dosen }}</option>
+                <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_pembimbing_1'] %}selected{% endif %}>{{ dosen }}</option>
             {% endfor %}
         </select><br>
-
+    
         <label for="dosen2">Dosen Pembimbing 2:</label>
         <select id="dosen2" name="dosen2">
             <option value="">--Pilih Dosen--</option>
             {% for dosen in dosen_list %}
-                <option value="{{ dosen }}">{{ dosen }}</option>
+                <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_pembimbing_2'] %}selected{% endif %}>{{ dosen }}</option>
             {% endfor %}
         </select><br>
-
+    
         <label for="dosen3">Dosen Penguji 1:</label>
         <select id="dosen3" name="dosen3">
             <option value="">--Pilih Dosen--</option>
             {% for dosen in dosen_list %}
-                <option value="{{ dosen }}">{{ dosen }}</option>
+                <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_penguji_1'] %}selected{% endif %}>{{ dosen }}</option>
             {% endfor %}
         </select><br>
-
+    
         <label for="dosen4">Dosen Penguji 2:</label>
         <select id="dosen4" name="dosen4">
             <option value="">--Pilih Dosen--</option>
             {% for dosen in dosen_list %}
-                <option value="{{ dosen }}">{{ dosen }}</option>
+                <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_penguji_2'] %}selected{% endif %}>{{ dosen }}</option>
             {% endfor %}
         </select><br>
-
+    
         <button type="submit">Cari Jadwal Kosong</button>
     </form>
 

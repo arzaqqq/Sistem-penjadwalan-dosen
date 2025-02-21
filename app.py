@@ -89,22 +89,19 @@ def upload_file():
 
     return render_template('upload.html')
 
-
-# Halaman utama untuk memilih dosen dan mencari jadwal kosong
 # Halaman utama untuk memilih dosen dan mencari jadwal kosong
 @app.route('/', methods=['GET', 'POST'])
 def index():
     dosen_list = session.get('dosen_list', [])
-    data = pd.read_json(session.get('data', '{}'))  # Mengambil data jadwal dosen yang telah disimpan
+    data = pd.read_json(session.get('data', '{}'))
+    dosen_pilihan = session.get('dosen_pilihan', {})
 
     if request.method == 'POST':
-        # Ambil nama dosen yang dipilih dari setiap dropdown
         dosen_pembimbing_1 = request.form.get('dosen1')
         dosen_pembimbing_2 = request.form.get('dosen2')
         dosen_penguji_1 = request.form.get('dosen3')
         dosen_penguji_2 = request.form.get('dosen4')
 
-        # Menyusun dosen yang dipilih dalam kategori
         dosen_dict = {
             'dosen_pembimbing_1': dosen_pembimbing_1,
             'dosen_pembimbing_2': dosen_pembimbing_2,
@@ -112,14 +109,14 @@ def index():
             'dosen_penguji_2': dosen_penguji_2,
         }
 
-        # Mencari jadwal kosong berdasarkan dosen yang dipilih
+        session['dosen_pilihan'] = dosen_dict
+
         selected_dosen = [dosen for dosen in dosen_dict.values() if dosen]
         if selected_dosen:
             jadwal_kosong = cari_jadwal_kosong(selected_dosen, data)
-
             return render_template('index.html', dosen_list=dosen_list, jadwal_kosong=jadwal_kosong, dosen_pilihan=dosen_dict)
 
-    return render_template('index.html', dosen_list=dosen_list)
+    return render_template('index.html', dosen_list=dosen_list, dosen_pilihan=dosen_pilihan)
 
 
 
