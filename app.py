@@ -31,8 +31,8 @@ def extract_dosen_from_file(file_path):
 
 # Fungsi untuk mencari jadwal kosong berdasarkan dosen yang dipilih
 def cari_jadwal_kosong(dosen_list, data):
-    jam_mulai = time_to_datetime("09:00")  #jam mulai
-    jam_selesai = time_to_datetime("17:00") #jam selesai
+    jam_mulai = time_to_datetime("08:00")  # Jam mulai yang kita tentukan (08:00)
+    jam_selesai = time_to_datetime("17:00")  # Jam selesai yang kita tentukan (15:00)
     waktu_kosong = []
 
     # Loop untuk setiap hari
