@@ -26,7 +26,12 @@ def extract_dosen_from_file(file_path):
     elif file_path.endswith('.xlsx'):
         data = pd.read_excel(file_path)
     
+    # Menghapus spasi ekstra pada kolom DOSEN
+    data['DOSEN'] = data['DOSEN'].str.replace('\s+', ' ', regex=True)
+    
     dosen_list = data['DOSEN'].dropna().unique().tolist()  # Ambil nama dosen unik tanpa NaN
+    dosen_list.sort()  # Mengurutkan nama dosen secara ascending
+    
     return dosen_list, data
 
 # Fungsi untuk mencari jadwal kosong berdasarkan dosen yang dipilih
@@ -98,11 +103,18 @@ def upload_file():
     return render_template('upload.html')
 
 # Halaman utama untuk memilih dosen dan mencari jadwal kosong
-# Halaman utama untuk memilih dosen dan mencari jadwal kosong
 @app.route('/', methods=['GET', 'POST'])
 def index():
     dosen_list = session.get('dosen_list', [])
     data = pd.read_json(session.get('data', '{}'))  # Mengambil data jadwal dosen yang telah disimpan
+
+    # Inisialisasi variabel dosen_pilihan dengan nilai default jika belum terdefinisi
+    dosen_pilihan = session.get('dosen_pilihan', {
+        'dosen_pembimbing_1': '',
+        'dosen_pembimbing_2': '',
+        'dosen_penguji_1': '',
+        'dosen_penguji_2': ''
+    })
 
     if request.method == 'POST':
         # Ambil nama dosen yang dipilih dari setiap dropdown
@@ -123,10 +135,13 @@ def index():
         selected_dosen = [dosen for dosen in dosen_dict.values() if dosen]
         if selected_dosen:
             jadwal_kosong = cari_jadwal_kosong(selected_dosen, data)
+            
+            # Update nilai dosen_pilihan dalam sesi
+            session['dosen_pilihan'] = dosen_dict
 
             return render_template('index.html', dosen_list=dosen_list, jadwal_kosong=jadwal_kosong, dosen_pilihan=dosen_dict)
 
-    return render_template('index.html', dosen_list=dosen_list)
+    return render_template('index.html', dosen_list=dosen_list, dosen_pilihan=dosen_pilihan)
 
 
 
