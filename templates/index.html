@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pilih Nama Dosen</title>
-</head>
-<body>
+{% extends 'layout/index.html' %}
+
+{% block content %}
     <h1>Pilih Nama Dosen</h1>
     
     <form action="/" method="POST">
@@ -69,5 +64,5 @@
         {% endfor %}
     </ul>
     {% endif %}
-</body>
-</html>
+    
+{% endblock %}
