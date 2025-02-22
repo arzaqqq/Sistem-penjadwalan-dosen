@@ -14,9 +14,9 @@
     if (window.___browserSync___ === undefined && Number(localStorage.getItem('AdminLTE:Demo:MessageShowed')) < Date.now()) {
       localStorage.setItem('AdminLTE:Demo:MessageShowed', (Date.now()) + (15 * 60 * 1000))
       // eslint-disable-next-line no-alert
-      alert('Selamat datang ke Sistem Penjadwala dosen Teknik Informatika!')
+      alert('Selamat Datang ke Sistem Penjadwalan Dosen Teknik Informatika!')
     }
-  }, 1000)
+  }, 500)
 
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1)

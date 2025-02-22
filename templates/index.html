@@ -1,84 +1,145 @@
 {% extends 'layout/index.html' %}
-
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/index.css') }}">
+<!-- Custom CSS -->
+
 <div class="content-header">
     <div class="container-fluid">
-      <div class="row mb-2">
-        <div class="col-sm-6">
-          <h1 class="m-0">Pilih Nama Dosen</h1>
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Dashboard Cek Jadwal</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Dashboard</li>
+                </ol>
+            </div>
         </div>
-        <div class="col-sm-6">
-          <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">Dashboard</li>
-          </ol>
-        </div>
-      </div>
-    
-    <form action="/" method="POST">
-        <label for="dosen1">Dosen Pembimbing 1:</label>
-        <select id="dosen1" name="dosen1">
-            <option value="">--Pilih Dosen--</option>
-            {% for dosen in dosen_list %}
-                <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_pembimbing_1'] %}selected{% endif %}>{{ dosen }}</option>
-            {% endfor %}
-        </select><br>
-        
-        <label for="dosen2">Dosen Pembimbing 2:</label>
-        <select id="dosen2" name="dosen2">
-            <option value="">--Pilih Dosen--</option>
-            {% for dosen in dosen_list %}
-                <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_pembimbing_2'] %}selected{% endif %}>{{ dosen }}</option>
-            {% endfor %}
-        </select><br>
-        
-        <label for="dosen3">Dosen Penguji 1:</label>
-        <select id="dosen3" name="dosen3">
-            <option value="">--Pilih Dosen--</option>
-            {% for dosen in dosen_list %}
-                <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_penguji_1'] %}selected{% endif %}>{{ dosen }}</option>
-            {% endfor %}
-        </select><br>
-        
-        <label for="dosen4">Dosen Penguji 2:</label>
-        <select id="dosen4" name="dosen4">
-            <option value="">--Pilih Dosen--</option>
-            {% for dosen in dosen_list %}
-                <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_penguji_2'] %}selected{% endif %}>{{ dosen }}</option>
-            {% endfor %}
-        </select><br>
-        
-        <button type="submit">Cari Jadwal Kosong</button>
-    </form>
-    
-    {% if jadwal_kosong %}
-    <h2>Jadwal Kosong untuk:</h2>
-    
-    {% if dosen_pilihan['dosen_pembimbing_1'] %}
-        <p>Dosen Pembimbing 1: {{ dosen_pilihan['dosen_pembimbing_1'] }}</p>
-    {% endif %}
-    
-    {% if dosen_pilihan['dosen_pembimbing_2'] %}
-        <p>Dosen Pembimbing 2: {{ dosen_pilihan['dosen_pembimbing_2'] }}</p>
-    {% endif %}
-    
-    {% if dosen_pilihan['dosen_penguji_1'] %}
-        <p>Dosen Penguji 1: {{ dosen_pilihan['dosen_penguji_1'] }}</p>
-    {% endif %}
-    
-    {% if dosen_pilihan['dosen_penguji_2'] %}
-        <p>Dosen Penguji 2: {{ dosen_pilihan['dosen_penguji_2'] }}</p>
-    {% endif %}
-    
-    <ul>
-        {% for jadwal in jadwal_kosong %}
-            <li>Hari: {{ jadwal[2] }} | Jam Kosong: {{ jadwal[0] }} - {{ jadwal[1] }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    </div>
-  </div>
 
-    
+        <div class="form-container">
+            <h2>Pilih Nama Dosen</h2>
+            <form action="/" method="POST" id="dosenForm">
+                <div class="select-wrapper">
+                    <label for="dosen1">Dosen Pembimbing 1:</label>
+                    <select id="dosen1" name="dosen1" class="custom-select">
+                        <option value="">--Pilih Dosen--</option>
+                        {% for dosen in dosen_list %}
+                            <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_pembimbing_1'] %}selected{% endif %}>{{ dosen }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="select-wrapper">
+                    <label for="dosen2">Dosen Pembimbing 2:</label>
+                    <select id="dosen2" name="dosen2" class="custom-select">
+                        <option value="">--Pilih Dosen--</option>
+                        {% for dosen in dosen_list %}
+                            <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_pembimbing_2'] %}selected{% endif %}>{{ dosen }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="select-wrapper">
+                    <label for="dosen3">Dosen Penguji 1:</label>
+                    <select id="dosen3" name="dosen3" class="custom-select">
+                        <option value="">--Pilih Dosen--</option>
+                        {% for dosen in dosen_list %}
+                            <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_penguji_1'] %}selected{% endif %}>{{ dosen }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="select-wrapper">
+                    <label for="dosen4">Dosen Penguji 2:</label>
+                    <select id="dosen4" name="dosen4" class="custom-select">
+                        <option value="">--Pilih Dosen--</option>
+                        {% for dosen in dosen_list %}
+                            <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_penguji_2'] %}selected{% endif %}>{{ dosen }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="submit-btn">Cari Jadwal Kosong</button>
+            </form>
+        </div>
+
+        {% if jadwal_kosong %}
+        <div class="schedule-container">
+            <h2>Jadwal Kosong untuk:</h2>
+            
+            <div class="selected-dosens">
+                {% if dosen_pilihan['dosen_pembimbing_1'] %}
+                    <p>Dosen Pembimbing 1: {{ dosen_pilihan['dosen_pembimbing_1'] }}</p>
+                {% endif %}
+                
+                {% if dosen_pilihan['dosen_pembimbing_2'] %}
+                    <p>Dosen Pembimbing 2: {{ dosen_pilihan['dosen_pembimbing_2'] }}</p>
+                {% endif %}
+                
+                {% if dosen_pilihan['dosen_penguji_1'] %}
+                    <p>Dosen Penguji 1: {{ dosen_pilihan['dosen_penguji_1'] }}</p>
+                {% endif %}
+                
+                {% if dosen_pilihan['dosen_penguji_2'] %}
+                    <p>Dosen Penguji 2: {{ dosen_pilihan['dosen_penguji_2'] }}</p>
+                {% endif %}
+            </div>
+
+            <table class="schedule-table">
+                <thead>
+                    <tr>
+                        <th>Hari</th>
+                        <th>Jam Mulai</th>
+                        <th>Jam Selesai</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for jadwal in jadwal_kosong %}
+                    <tr>
+                        <td>{{ jadwal[2] }}</td>
+                        <td>{{ jadwal[0] }}</td>
+                        <td>{{ jadwal[1] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Optional JavaScript for enhanced interactivity -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('dosenForm');
+    const loading = document.querySelector('.loading');
+
+    // Prevent duplicate submissions
+    form.addEventListener('submit', function(e) {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Mencari...';
+        
+        // Show loading animation
+        loading.style.display = 'block';
+        
+        // Re-enable button after 2 seconds if form hasn't redirected
+        setTimeout(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Cari Jadwal Kosong';
+            loading.style.display = 'none';
+        }, 2000);
+    });
+
+    // Add smooth scrolling to schedule results
+    if(document.querySelector('.schedule-container')) {
+        document.querySelector('.schedule-container').scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+});
+</script>
 
 {% endblock %}
