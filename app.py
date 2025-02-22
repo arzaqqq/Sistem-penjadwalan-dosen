@@ -1,107 +1,107 @@
-import os  # Pastikan ini ada di bagian atas file
-from flask import Flask, render_template, request, session
+import os
+from flask import Flask, render_template, request, session, send_from_directory
 import pandas as pd
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
+# Konfigurasi tambahan untuk upload
+UPLOAD_FOLDER = 'uploads'
+TEMPLATE_FOLDER = 'static/templates'
+ALLOWED_EXTENSIONS = {'csv', 'xlsx'}
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+if not os.path.exists(TEMPLATE_FOLDER):
+    os.makedirs(TEMPLATE_FOLDER)
+
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Max 16MB file
+app.secret_key = 'secret_key_for_session'
 
-# Tentukan folder untuk menyimpan file upload dan kunci sesi
-app.config['UPLOAD_FOLDER'] = 'uploads/'
-app.config['ALLOWED_EXTENSIONS'] = {'csv', 'xlsx'}
-app.secret_key = 'secret_key_for_session'  # Kunci untuk sesi
-
-# Fungsi untuk memeriksa ekstensi file yang valid
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Fungsi untuk mengonversi waktu ke format datetime
-def time_to_datetime(time_str):
-    return datetime.strptime(time_str, "%H:%M")
+# Route untuk download template
+@app.route('/download-template')
+def download_template():
+    try:
+        return send_from_directory('static/templates', 
+                                 'template_jadwal.xlsx', 
+                                 as_attachment=True)
+    except FileNotFoundError:
+        return "Template file not found", 404
 
-# Fungsi untuk membaca dan mengekstrak nama dosen dari file
-def extract_dosen_from_file(file_path):
-    if file_path.endswith('.csv'):
-        data = pd.read_csv(file_path)
-    elif file_path.endswith('.xlsx'):
-        data = pd.read_excel(file_path)
-    
-    # Menghapus spasi ekstra pada kolom DOSEN
-    data['DOSEN'] = data['DOSEN'].str.replace('\s+', ' ', regex=True)
-    
-    dosen_list = data['DOSEN'].dropna().unique().tolist()  # Ambil nama dosen unik tanpa NaN
-    dosen_list.sort()  # Mengurutkan nama dosen secara ascending
-    
-    return dosen_list, data
-
-# Fungsi untuk mencari jadwal kosong berdasarkan dosen yang dipilih
-def cari_jadwal_kosong(dosen_list, data):
-    jam_mulai = time_to_datetime("09:00")  # Jam mulai 
-    jam_selesai = time_to_datetime("17:00")  # Jam selesai 
-    waktu_kosong = []
-
-    # Loop untuk setiap hari
-    for hari in ['SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT']:
-        jadwal_hari = []
-        
-        # Menyusun jadwal untuk setiap dosen yang dipilih pada hari tersebut
-        for index, row in data.iterrows():
-            if row['DOSEN'] in dosen_list and pd.notna(row[hari]):
-                start_time, end_time = row[hari].split('-')
-                start_time = time_to_datetime(start_time)
-                end_time = time_to_datetime(end_time)
-                jadwal_hari.append((start_time, end_time))
-        
-        jadwal_hari.sort()  # Mengurutkan berdasarkan waktu mulai
-
-        # Cek waktu kosong di antara jadwal yang ada
-        prev_end_time = jam_mulai
-        for start, end in jadwal_hari:
-            if start > prev_end_time:
-                waktu_kosong.append((prev_end_time.strftime('%H:%M'), start.strftime('%H:%M'), hari))
-            prev_end_time = max(prev_end_time, end)
-
-        # Cek waktu kosong setelah jadwal terakhir hingga jam selesai
-        if prev_end_time < jam_selesai:
-            waktu_kosong.append((prev_end_time.strftime('%H:%M'), jam_selesai.strftime('%H:%M'), hari))
-
-    return waktu_kosong  # Hanya mengembalikan waktu kosong
-
-
-# Halaman Upload untuk file jadwal dosen
+# Route untuk halaman upload
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
+    error_message = None
+    preview_data = None
+    
     if request.method == 'POST':
-        # Menghapus sesi yang lama terlebih dahulu
-        session.pop('dosen_list', None)
-        session.pop('data', None)
-
-        # Mengambil file yang di-upload
+        # Check if file is present in request
+        if 'file' not in request.files:
+            error_message = 'Tidak ada file yang dipilih'
+            return render_template('upload.html', error=error_message)
+        
         file = request.files['file']
+        
+        # Check if file is selected
+        if file.filename == '':
+            error_message = 'Tidak ada file yang dipilih'
+            return render_template('upload.html', error=error_message)
+        
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(filepath)
-
-            # Mengambil nama dosen dan data dari file yang di-upload
-            dosen_list, data = extract_dosen_from_file(filepath)
-
-            # Menyimpan nama dosen dalam sesi
-            session['dosen_list'] = dosen_list
-            session['data'] = data.to_json()  # Menyimpan data dalam format JSON untuk digunakan nanti
-
-            # Inisialisasi variabel dosen_pilihan dengan dictionary kosong
-            dosen_pilihan = {
-                'dosen_pembimbing_1': '',
-                'dosen_pembimbing_2': '',
-                'dosen_penguji_1': '',
-                'dosen_penguji_2': ''
-            }
-
-            return render_template('index.html', dosen_list=dosen_list, dosen_pilihan=dosen_pilihan)
-
-    return render_template('upload.html')
-
+            try:
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(filepath)
+                
+                # Read file for preview based on extension
+                if filename.endswith('.csv'):
+                    preview_data = pd.read_csv(filepath)
+                else:
+                    preview_data = pd.read_excel(filepath)
+                
+                # Basic validation of required columns
+                required_columns = ['DOSEN', 'SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT']
+                missing_columns = [col for col in required_columns if col not in preview_data.columns]
+                
+                if missing_columns:
+                    error_message = f"Kolom yang diperlukan tidak ditemukan: {', '.join(missing_columns)}"
+                    os.remove(filepath)  # Hapus file yang tidak valid
+                    return render_template('upload.html', error=error_message)
+                
+                # Clean the data
+                preview_data = preview_data.fillna('')  # Replace NaN with empty string
+                
+                # Extract dosen list dan simpan di session
+                dosen_list = preview_data['DOSEN'].unique().tolist()
+                session['dosen_list'] = dosen_list
+                session['data'] = preview_data.to_json()
+                
+                # Convert preview data to dict for template
+                preview_dict = preview_data.to_dict('records')
+                columns = preview_data.columns.tolist()
+                
+                return render_template('upload.html', 
+                                     preview_data=preview_dict,
+                                     columns=columns,
+                                     success='File berhasil diupload!')
+                
+            except Exception as e:
+                error_message = f"Error saat memproses file: {str(e)}"
+                # Jika terjadi error, hapus file yang sudah diupload
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+        else:
+            error_message = 'Format file tidak diizinkan. Gunakan CSV atau Excel (.xlsx)'
+    
+    # GET request atau jika ada error
+    return render_template('upload.html', 
+                         error=error_message,
+                         preview_data=preview_data.to_dict('records') if preview_data is not None else None,
+                         columns=preview_data.columns.tolist() if preview_data is not None else None)
 # Halaman utama untuk memilih dosen dan mencari jadwal kosong
 @app.route('/', methods=['GET', 'POST'])
 def index():

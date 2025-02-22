@@ -1,26 +1,116 @@
 {% extends 'layout/index.html' %}
 
 {% block content %}
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/upload.css') }}">
+
 <div class="content-header">
     <div class="container-fluid">
-      <div class="row mb-2">
-        <div class="col-sm-6">
-          <h1 class="m-0">Upload jadwal Dosen</h1>
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Upload Jadwal Dosen</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Jadwal Dosen</li>
+                </ol>
+            </div>
         </div>
-        <div class="col-sm-6">
-          <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">Jadwal Dosen</li>
-          </ol>
-        </div>
-      </div>
 
-   
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" required>
-        <button type="submit">Upload</button>
-    </form>
+        <div class="upload-container">
+            <div class="download-section">
+                <p>Berikut adalah contoh template CSV atau Excel yang bisa di upload:</p>
+                <a href="{{ url_for('download_template') }}" class="download-link">
+                    <i class="fas fa-download"></i>
+                    Download Template
+                </a>
+            </div>
+
+            <form action="/upload" method="post" enctype="multipart/form-data" id="uploadForm">
+                <div class="file-upload">
+                    <input type="file" name="file" id="fileInput" class="file-upload-input" accept=".csv, .xlsx" required>
+                    <label for="fileInput" class="file-upload-label">
+                        <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                        <span class="file-upload-text">Drag & drop file atau klik untuk memilih</span>
+                    </label>
+                    <div id="fileName" class="file-name"></div>
+                    <button type="submit" class="upload-btn mt-3">Upload</button>
+                </div>
+            </form>
+
+            {% if preview_data %}
+            <div class="preview-container">
+                <h4 class="mb-4">Preview Data</h4>
+                <table class="preview-table">
+                    <thead>
+                        <tr>
+                            {% for column in columns %}
+                            <th>{{ column }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in preview_data %}
+                        <tr>
+                            {% for column in columns %}
+                            <td>{{ row[column] }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
     </div>
-  </div>
-    
+</div>
+
+<div class="loading-overlay">
+    <div class="loading-spinner"></div>
+</div>
+
+<!-- JavaScript for enhanced functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('uploadForm');
+    const fileInput = document.getElementById('fileInput');
+    const fileName = document.getElementById('fileName');
+    const loadingOverlay = document.querySelector('.loading-overlay');
+
+    fileInput.addEventListener('change', function(e) {
+        if (this.files[0]) {
+            fileName.textContent = 'File dipilih: ' + this.files[0].name;
+        }
+    });
+
+    // Drag and drop functionality
+    const dropZone = document.querySelector('.file-upload');
+
+    dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.style.borderColor = '#4299e1';
+    });
+
+    dropZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.style.borderColor = '#e2e8f0';
+    });
+
+    dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.style.borderColor = '#e2e8f0';
+        
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            fileName.textContent = 'File dipilih: ' + e.dataTransfer.files[0].name;
+        }
+    });
+
+    form.addEventListener('submit', function() {
+        loadingOverlay.style.display = 'block';
+    });
+});
+</script>
+
 {% endblock %}
