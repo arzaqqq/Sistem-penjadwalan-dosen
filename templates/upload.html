@@ -1,15 +1,26 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Jadwal Dosen</title>
-</head>
-<body>
-    <h1>Upload Jadwal Dosen</h1>
+{% extends 'layout/index.html' %}
+
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Upload jadwal Dosen</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">Jadwal Dosen</li>
+          </ol>
+        </div>
+      </div>
+
+   
     <form action="/upload" method="post" enctype="multipart/form-data">
         <input type="file" name="file" required>
         <button type="submit">Upload</button>
     </form>
-</body>
-</html>
+    </div>
+  </div>
+    
+{% endblock %}

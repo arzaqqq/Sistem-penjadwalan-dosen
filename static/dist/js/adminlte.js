@@ -1712,7 +1712,7 @@
     scrollbarAutoHide: 'l',
     panelAutoHeight: true,
     panelAutoHeightMode: 'min-height',
-    preloadDuration: 200,
+    preloadDuration: 700,
     loginRegisterAutoHeight: true
   };
   /**
