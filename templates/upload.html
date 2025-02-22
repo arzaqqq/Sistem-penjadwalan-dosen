@@ -39,27 +39,33 @@
                 </div>
             </form>
 
-            {% if preview_data %}
-            <div class="preview-container">
-                <h4 class="mb-4">Preview Data</h4>
-                <table class="preview-table">
-                    <thead>
-                        <tr>
-                            {% for column in columns %}
-                            <th>{{ column }}</th>
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for row in preview_data %}
-                        <tr>
-                            {% for column in columns %}
-                            <td>{{ row[column] }}</td>
-                            {% endfor %}
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            {% if preview_data and columns %}
+            <div class="preview-container mt-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-4">Preview Data</h4>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table-hover text-nowrap">
+                            <thead>
+                                <tr>
+                                    {% for column in columns %}
+                                    <th>{{ column }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in preview_data %}
+                                <tr>
+                                    {% for column in columns %}
+                                    <td>{{ row[column] }}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             {% endif %}
         </div>
