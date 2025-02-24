@@ -36,17 +36,15 @@ def create_template_file():
     return template_path
 
 # Route untuk download template
+
 @app.route('/download-template')
 def download_template():
-    template_path = create_template_file()
     try:
-        return send_file(
-            template_path,
-            as_attachment=True,
-            download_name='template_jadwal.xlsx'
-        )
-    except Exception as e:
-        return str(e), 400
+        return send_from_directory('static/templates', 
+                                 'template_jadwal.xlsx', 
+                                 as_attachment=True)
+    except FileNotFoundError:
+        return "Template file not found", 404
 
 # Helper functions remain the same
 def allowed_file(filename):
