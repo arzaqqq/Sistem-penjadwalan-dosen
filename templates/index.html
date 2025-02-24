@@ -20,45 +20,53 @@
         <div class="form-container">
             <h2>Pilih Nama Dosen</h2>
             <form action="/" method="POST" id="dosenForm">
-                <div class="select-wrapper">
-                    <label for="dosen1">Dosen Pembimbing 1:</label>
-                    <select id="dosen1" name="dosen1" class="custom-select">
-                        <option value="">--Pilih Dosen--</option>
-                        {% for dosen in dosen_list %}
-                            <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_pembimbing_1'] %}selected{% endif %}>{{ dosen }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="select-wrapper">
-                    <label for="dosen2">Dosen Pembimbing 2:</label>
-                    <select id="dosen2" name="dosen2" class="custom-select">
-                        <option value="">--Pilih Dosen--</option>
-                        {% for dosen in dosen_list %}
-                            <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_pembimbing_2'] %}selected{% endif %}>{{ dosen }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="select-wrapper">
-                    <label for="dosen3">Dosen Penguji 1:</label>
-                    <select id="dosen3" name="dosen3" class="custom-select">
-                        <option value="">--Pilih Dosen--</option>
-                        {% for dosen in dosen_list %}
-                            <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_penguji_1'] %}selected{% endif %}>{{ dosen }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="select-wrapper">
-                    <label for="dosen4">Dosen Penguji 2:</label>
-                    <select id="dosen4" name="dosen4" class="custom-select">
-                        <option value="">--Pilih Dosen--</option>
-                        {% for dosen in dosen_list %}
-                            <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_penguji_2'] %}selected{% endif %}>{{ dosen }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+              <div class="select-wrapper">
+                <label for="dosen1">Dosen Pembimbing 1:</label>
+                <select id="dosen1" name="dosen1" class="custom-select" required>
+                    <option value="">--Pilih Dosen--</option>
+                    {% for dosen in dosen_list %}
+                        <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_pembimbing_1'] %}selected{% endif %}>
+                            {{ dosen }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="select-wrapper">
+                <label for="dosen2">Dosen Pembimbing 2:</label>
+                <select id="dosen2" name="dosen2" class="custom-select">
+                    <option value="">--Pilih Dosen--</option>
+                    {% for dosen in dosen_list %}
+                        <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_pembimbing_2'] %}selected{% endif %}>
+                            {{ dosen }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="select-wrapper">
+                <label for="dosen3">Dosen Penguji 1:</label>
+                <select id="dosen3" name="dosen3" class="custom-select">
+                    <option value="">--Pilih Dosen--</option>
+                    {% for dosen in dosen_list %}
+                        <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_penguji_1'] %}selected{% endif %}>
+                            {{ dosen }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="select-wrapper">
+                <label for="dosen4">Dosen Penguji 2:</label>
+                <select id="dosen4" name="dosen4" class="custom-select">
+                    <option value="">--Pilih Dosen--</option>
+                    {% for dosen in dosen_list %}
+                        <option value="{{ dosen }}" {% if dosen == dosen_pilihan['dosen_penguji_2'] %}selected{% endif %}>
+                            {{ dosen }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
                 <button type="submit" class="submit-btn">Cari Jadwal Kosong</button>
             </form>
