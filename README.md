@@ -12,7 +12,7 @@ Ada dua cara untuk men-download proyek:
 
 #### Metode Git Clone
 ```bash
-git clone [URL_REPOSITORI_ANDA]
+git clone [[URL_REPOSITORI_ANDA]](https://github.com/arzaqqq/Sistem-penjadwalan-dosen.git)
 cd [NAMA_FOLDER_PROYEK]
 ```
 
