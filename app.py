@@ -5,7 +5,7 @@ import json
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
-# Configuration remains the same
+# Konfigurasi
 UPLOAD_FOLDER = 'uploads'
 TEMPLATE_FOLDER = 'static/templates'
 ALLOWED_EXTENSIONS = {'csv', 'xlsx'}
@@ -36,7 +36,6 @@ def create_template_file():
     return template_path
 
 # Route untuk download template
-
 @app.route('/download-template')
 def download_template():
     try:
@@ -46,7 +45,7 @@ def download_template():
     except FileNotFoundError:
         return "Template file not found", 404
 
-# Helper functions remain the same
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -57,7 +56,6 @@ def time_to_datetime(time_str):
         return None
 
 def cari_jadwal_kosong(dosen_list, data):
-    # Convert data back to DataFrame if it's a string
     if isinstance(data, str):
         data = pd.read_json(data)
     elif data is None:
@@ -177,7 +175,7 @@ def upload_file():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    # Get data from session
+    # Dapatkan data dari section
     dosen_list = session.get('dosen_list', [])
     data_json = session.get('data')
     preview_data = session.get('preview_data')
@@ -186,7 +184,7 @@ def index():
     # Pastikan dosen_list sudah bersih dan terurut
     dosen_list = clean_and_sort_dosen_list(dosen_list)
     
-    # Convert JSON string back to DataFrame
+    # Konversi data adari JSON ke dataframe
     data = pd.DataFrame(json.loads(data_json)) if data_json else pd.DataFrame()
     
     dosen_pilihan = {
